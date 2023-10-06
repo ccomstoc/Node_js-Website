@@ -1,0 +1,69 @@
+<html lang="en">
+
+    <%- include('./partials/head.ejs') %>
+
+    <body>
+
+        <%- include('./partials/nav.ejs') %>
+
+        <div class="create-course content">
+            <form id="myform" action="/edit/<%= course._id %>" method="POST">
+                <label for="code">Course code:</label>
+                <input type="text" id="code" name="code" value="<%= course.code %>"required>
+                <label for="title">Course title:</label>
+                <input type="text" id="title" name="title" value="<%= course.title %>"required>
+                <label for="creidts">Number of Credits:</label>
+                <input type="number" id="credits" name="credits" value="<%= course.credits %>"required>
+                <label for="desc">Course description:</label>
+                <textarea id="desc" name="desc" required><%= course.desc %></textarea>
+                <button id="updateButton" data-doc="<%= course._id %>">Update</button>
+            </form>
+                <!--<button id="edit" data-doc="<%= course._id %>">Edit</button>-->
+                
+                
+            
+        </div>
+
+        <%- include('./partials/footer.ejs') %>
+
+        <script>
+
+            document.addEventListener('DOMContentLoaded', () => {
+                const courseForm = document.querySelector('#myForm');
+                const updateButton = document.querySelector('#updateButton');
+                const courseId = '<%= course._id %>';
+
+                updateButton.addEventListener('click', (e) => {
+                    e.preventDefault(); // Prevent the default form submission
+                    
+                    const formData = new FormData(courseForm); // Get the form data
+
+                        // Create an object from the form data
+                        const courseData = {
+                        
+                        code: formData.get('code'),
+                        title: formData.get('title'),
+                        desc: formData.get('desc'),
+                        credits: formData.get('credits'),
+                        };
+
+                        // Send a PUT request to update the course
+                        fetch(`/edit/<%= course._id %>`, {
+                            method: 'PUT',
+                            headers: {
+                            'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(courseData)
+                        })
+                        .then(response => response.json())
+                        .then(data => window.location.href = data.redirect)
+                        .catch(err => console.log(err));
+                    });
+
+
+                
+            })
+        </script>
+
+    </body>
+</html>
